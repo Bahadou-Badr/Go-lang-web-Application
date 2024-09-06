@@ -55,3 +55,30 @@ information secure and our server performing quickly.
 - How to set connection timeouts on our server to mitigate Slowloris
 and other slow-client attacks
 
+#### Generating a Self-Signed TLS Certificate
+
+HTTPS is essentially HTTP sent across a TLS (Transport Layer Security)
+connection. Because it’s sent over a TLS connection the data is encrypted and
+signed, which helps ensure its privacy and integrity during transit.
+
+If you’re not familiar with the term, TLS is essentially the modern version of SSL
+(Secure Sockets Layer).
+
+-  create a new 'tls' directory in the root of your project repository to hold the certificate and change into it
+- generate a TLS certificate :
+
+  Handily, the crypto/tls package in Go’s standard library includes a
+  generate_cert.go tool that we can use to easily create our own self-signed
+  certificate.
+  ```
+  go run /usr/local/go/src/crypto/tls/generate_cert.go --rsa-bits=2048 --host=localhost
+  ```
+
+- It then stores the private key in a key.pem file, and generates a self-signed
+  TLS certificate for the host localhost containing the public key — which it
+  stores in a cert.pem file
+  ```
+  tls/
+      cert.pem
+      key.pem
+  ```

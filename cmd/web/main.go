@@ -2,7 +2,8 @@ package main
 
 import (
 	"bdr/bdsnippetbox/pkg/models/mysql" // New import
-	"database/sql"                      // New import
+	"crypto/tls"
+	"database/sql" // New import
 	"flag"
 	_ "github.com/go-sql-driver/mysql" // New import
 	"github.com/golangcollege/sessions"
@@ -70,14 +71,26 @@ func main() {
 		session:       session,
 	}
 
+	// Initialize a tls.Config struct to hold the non-default TLS settings we w
+	// the server to use.
+	tlsConfig := &tls.Config{
+		PreferServerCipherSuites: true,
+		CurvePreferences:         []tls.CurveID{tls.X25519, tls.CurveP256},
+	}
+
 	// Initialize a new http.Server struct. We set the Addr and Handler fields
 	// that the server uses the same network address and routes as before, and
 	// the ErrorLog field so that the server now uses the custom errorLog logge
 	// the event of any problems.
 	srv := &http.Server{
-		Addr:     *addr,
-		ErrorLog: errorLog,
-		Handler:  app.routes(), // Call the new app.routes() method
+		Addr:      *addr,
+		ErrorLog:  errorLog,
+		Handler:   app.routes(), // Call the new app.routes() method
+		TLSConfig: tlsConfig,
+		// Add Idle, Read and Write timeouts to the server.
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 
 	infoLog.Printf("Starting server on %s", *addr)

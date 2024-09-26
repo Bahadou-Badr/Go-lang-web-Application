@@ -23,13 +23,14 @@ type application struct {
 	session       *sessions.Session
 	snippets      *mysql.SnippetModel
 	templateCache map[string]*template.Template
+	users         *mysql.UserModel
 }
 
 func main() {
 	// THe flag value will be stored in the addr variable at runtime. We’ve used the flag.String() function to define the command-line flag
 	addr := flag.String("addr", ":4000", "HTTP network address")
 	// Define a new command-line flag for the MySQL DSN string.
-	dsn := flag.String("dsn", "root:@/snippetbox?parseTime=true", "MySQL database access")
+	dsn := flag.String("dsn", "web:pass@/snippetbox?parseTime=true", "MySQL database access")
 	// Define a new command-line flag for the session secret (a random key whic
 	// will be used to encrypt and authenticate session cookies). It should be
 	// bytes long.
@@ -61,6 +62,7 @@ func main() {
 	session := sessions.New([]byte(*secret))
 	session.Lifetime = 12 * time.Hour
 	session.Secure = true // Set the Secure flag on our session cookies
+	session.SameSite = http.SameSiteStrictMode
 	// Initialize a mysql.SnippetModel instance and add it to the application
 	// dependencies.
 	app := &application{
@@ -69,6 +71,7 @@ func main() {
 		snippets:      &mysql.SnippetModel{DB: db},
 		templateCache: templateCache,
 		session:       session,
+		users:         &mysql.UserModel{DB: db},
 	}
 
 	// Initialize a tls.Config struct to hold the non-default TLS settings we w

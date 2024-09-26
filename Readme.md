@@ -82,3 +82,13 @@ If you’re not familiar with the term, TLS is essentially the modern version of
       cert.pem
       key.pem
   ```
+
+## User Authentication/Authorization
+- Implement basic signup, login and logout functionality for
+users.
+- A secure approach to encrypting and storing user passwords securely
+in your database using Bcrypt.
+- A solid and straightforward approach to verifying that a user is logged
+in using middleware and sessions.
+- Prevent Cross-Site Request Forgery (CSRF) attacks
+

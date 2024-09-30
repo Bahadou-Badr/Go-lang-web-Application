@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bdr/bdsnippetbox/pkg/models"
+	"context"
 	"fmt"
 	"github.com/justinas/nosurf"
 	"net/http"
@@ -66,4 +68,35 @@ func noSurf(next http.Handler) http.Handler {
 		Secure:   true,
 	})
 	return csrfHandler
+}
+
+func (app *application) authenticate(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Check if a userID value exists in the session. If this *isn't
+		// present* then call the next handler in the chain as normal.
+		exists := app.session.Exists(r, "userID")
+		if !exists {
+			next.ServeHTTP(w, r)
+			return
+		}
+		// Fetch the details of the current user from the database. If
+		// no matching record is found, remove the (invalid) userID from
+		// their session and call the next handler in the chain as normal.
+		user, err := app.users.Get(app.session.GetInt(r, "userID"))
+		if err == models.ErrNoRecord {
+			app.session.Remove(r, "userID")
+			next.ServeHTTP(w, r)
+			return
+		} else if err != nil {
+			app.serverError(w, err)
+			return
+		}
+		// Otherwise, we know that the request is coming from a valid,
+		// authenticated (logged in) user. We create a new copy of the
+		// request with the user information added to the request context, and
+		// call the next handler in the chain *using this new copy of the
+		// request*.
+		ctx := context.WithValue(r.Context(), contextKeyUser, user)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }

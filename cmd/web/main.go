@@ -14,6 +14,10 @@ import (
 	"time"
 )
 
+type contextKey string
+
+var contextKeyUser = contextKey("user")
+
 // Add a snippets field to the application struct. This will allow us to
 // make the SnippetModel object available to our handlers
 // Add a new session field to the application struct.

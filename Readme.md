@@ -1,4 +1,26 @@
-### Middleware
+# Snippet Sharing Web App (No Frameworks)
+
+This is a web application built from scratch using **Go**, without relying on any Go frameworks. The app allows users to paste and share text snippets, and it covers a variety of web development topics along the way.
+
+## Features
+
+### Basic Functionality:
+- **Project Organization**: Clean and efficient structure to keep things modular and maintainable.
+- **Routing**: Handles HTTP routes to ensure proper request/response flows.
+- **Database Integration**: Connects to a database to persist and retrieve snippets.
+- **Form Processing & Dynamic Data**: Processes form data and safely displays dynamic content.
+- **User Accounts**: Allows users to create accounts for a more personalized experience.
+
+### Advanced Features:
+- **User Permissions**: Only registered users can create new snippets.
+- **HTTPS Configuration**: Ensures secure communication using HTTPS.
+- **Session Management**: Tracks user sessions to maintain logins and other stateful interactions.
+- **User Authentication**: Allows users to log in and out of the application securely.
+- **Middleware**: Implements reusable components to enhance the functionality of the app.
+
+
+------------------------------------------
+#### Middleware
 - The standard pattern for creating a middleware looks like this:
 ```go
 func myMiddleware(next http.Handler) http.Handler {
